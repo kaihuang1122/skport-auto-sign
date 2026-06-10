@@ -13,7 +13,7 @@ A lightweight, secure, and free script that automatically collect SKPORT daily c
 Supports **Arknights(TW server)** and **Arknights: Endfield**. Support multiple accounts.
 
 ## Features
-* **Lightweight** - The script only requires minimal configuration and is only 160 lines of code.
+* **Lightweight** - The script only requires minimal configuration and is only 250 lines of code.
 * **Secure** - The script can be self-deployed to Google Apps Script, no worries about data leaks.
 * **Free** - Google Apps Script is currently a free service.
 * **Simple** - The script can run without a browser and will automatically notify you through Discord or Telegram.
@@ -34,15 +34,10 @@ Supports **Arknights(TW server)** and **Arknights: Endfield**. Support multiple 
 ```javascript
 const profiles = [
   {
-    SK_OAUTH_CRED_KEY: "", // your skport SK_OAUTH_CRED_KEY in cookie
-    SK_TOKEN_CACHE_KEY: "", // your SK_TOKEN_CACHE_KEY in localStorage
+    account_token: "", // your skport account_token in cookie store
     arknights: true,
-    arknights_uid: "", // your Arknights character uid
     endfield: true,
-    endfield_id: "", // your Endfield game id
-    endfield_server: "2", // Asia=2 Americas/Europe=3
-    language: "en", // english=en 日本語=ja 繁體中文=zh_Hant 简体中文=zh_Hans 한국어=ko Русский=ru_RU
-    accountName: "YOUR NICKNAME"
+    language: "en" // english=en 日本語=ja 繁體中文=zh_Hant 简体中文=zh_Hans 한국어=ko Русский=ru_RU
   }
 ];
 ```
@@ -50,62 +45,27 @@ const profiles = [
 <details>
 <summary><b>SKPORT settings</b></summary>
 
-1. **SK_OAUTH_CRED_KEY** - Please enter the cred for SKPORT check-in page.  
-2. **SK_TOKEN_CACHE_KEY** -  Please enter the token for SKPORT check-in page.  
+1. **account_token** - Please enter your long-term account token.  
 
-   After entering the [SKPORT check-in page](https://game.skport.com/endfield/sign-in), press F12 to enter the console.
-   Paste the following code and run it to get the cred. Copy the cred and fill it in "quotes".
-   ```javascript
-   function getCookie(name) {
-   const value = `; ${document.cookie}`;
-   const parts = value.split(`; ${name}=`);
-   if (parts.length === 2) return parts.pop().split(';').shift();
-   }
-
-   let cred = 'Error';
-   if (document.cookie.includes('SK_OAUTH_CRED_KEY=')) {
-   cred = `${getCookie('SK_OAUTH_CRED_KEY')}`;
-   }
-
-   let ask = confirm(cred + '\n\nPress enter, then paste the token into your Google Apps Script Project');
-   let msg = ask ? cred : 'Cancel';
-   console.log('SK_OAUTH_CRED_KEY:');
-   console.log(msg);
-
-   let token = 'Error';
-   if (localStorage.getItem('SK_TOKEN_CACHE_KEY')) {
-   token = localStorage.getItem('SK_TOKEN_CACHE_KEY');
-   }
-
-   let ask2 = confirm(token + '\n\nPress enter, then paste the token into your Google Apps Script Project');
-   let msg2 = ask2 ? token : 'Cancel';
-   console.log('SK_TOKEN_CACHE_KEY:');
-   console.log(msg2);
+   Go to the [Gryphline Cookie Store API page](https://web-api.gryphline.com/cookie_store/account_token) (make sure you are already logged into Gryphline / SKPORT on the same browser).
+   You will see a JSON string similar to this:
+   ```json
+   {"code":0,"data":{"content":"YourAccountTokenHere"},"msg":""}
    ```
+   Please copy the alphanumeric string after `content` (in the example above, `YourAccountTokenHere`) and fill it into the "quotes" of `account_token` in the configuration.
 
-3. **arknights**
+2. **arknights**
 
-   Whether to enable auto check-in for **Arknights**. Set to true if you want to enable it, false otherwise.
+   Whether to enable auto check-in for **Arknights**. Set to `true` if you want to enable it, `false` otherwise.
+   The script will automatically fetch and check-in for all Arknights characters under this account.
 
-4. **arknights_uid**
+3. **endfield**
 
-   Please enter your Arknights game UID here. (should be number)
+   Whether to enable auto check-in for **Arknights: Endfield**. Set to `true` if you want to enable it, `false` otherwise.
+   By default, the script will automatically fetch and check-in for characters on "all servers" under this account (e.g., signing in for both Asia and Americas/Europe servers simultaneously).
+   If you only want to sign in for specific servers, you can change this field to an array format, for example: `endfield: [2]` (only sign in for Asia server), or `endfield: [3]` (only sign in for Americas/Europe server).
 
-5. **endfield**
-
-   Whether to enable auto check-in for **Arknights: Endfield**. Set to true if you want to enable it, false otherwise.
-
-6. **endfield_id**
-
-   Please enter your Arknights: Endfield game ID here. (should be number)
-
-7. **endfield_server**
-
-   Please enter your Arknights: Endfield game server here.  
-   If you're in Asia server, please enter `2`,  
-   If you're in Americas/Europe server, please enter `3`.
-
-8. **language**
+4. **language**
 
    Please enter your Arknights: Endfield game language here.  
    If you're using english, please enter `en`,  
@@ -114,10 +74,6 @@ const profiles = [
    If you're using 简体中文, please enter `zh_Hans`,  
    If you're using 한국어, please enter `ko`,  
    If you're using Русский, please enter `ru_RU`.
-
-9. **accountName** - Please enter your customized nickname.
-
-   Please enter your customized SKPORT or in-game nickname here.
 
 </details>
 
