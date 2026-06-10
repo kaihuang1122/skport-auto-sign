@@ -2,8 +2,14 @@ const profiles = [
   {
     SK_OAUTH_CRED_KEY: "", // your skport SK_OAUTH_CRED_KEY in cookie
     SK_TOKEN_CACHE_KEY: "", // your SK_TOKEN_CACHE_KEY in localStorage
-    id: "", // your Endfield game id
-    server: "2", // Asia=2 Americas/Europe=3
+    
+    arknights: true,
+    arknights_uid: "", // your Arknights character uid
+    
+    endfield: true,
+    endfield_id: "", // your Endfield game id
+    endfield_server: "2", // Asia=2 Americas/Europe=3
+    
     language: "en", // english=en 日本語=ja 繁體中文=zh_Hant 简体中文=zh_Hans 한국어=ko Русский=ru_RU
     accountName: "YOUR NICKNAME"
   }
@@ -18,6 +24,7 @@ const discordWebhook = ""
 
 const urlDict = {
   Endfield: 'https://zonai.skport.com/web/v1/game/endfield/attendance',
+  Arknights: 'https://zonai.skport.com/api/v1/game/attendance',
 };
 
 const headerDict = {
@@ -70,28 +77,70 @@ function discordPing() {
   return myDiscordID ? `<@${myDiscordID}> ` : '';
 }
 
-function autoSignFunction({ SK_OAUTH_CRED_KEY, SK_TOKEN_CACHE_KEY, id, server, language = "en", accountName }) {
-  const path = "/web/v1/game/endfield/attendance";
+function autoSignFunction({
+  SK_OAUTH_CRED_KEY,
+  SK_TOKEN_CACHE_KEY,
+  arknights = false,
+  arknights_uid,
+  endfield = false,
+  endfield_id,
+  endfield_server,
+  language = "en",
+  accountName
+}) {
+  const urlsnheaders = [];
   const timestamp = String(Math.floor(Date.now() / 1000));
 
-  const headers = {
-    ...headerDict.default,
-    cred: SK_OAUTH_CRED_KEY,
-    "sk-game-role": `3_${id}_${server}`,
-    "sk-language": language,
-    timestamp,
-  };
-  headers.sign = generateSign(path, 'POST', headers, '', '', SK_TOKEN_CACHE_KEY);
+  if (arknights) {
+    urlsnheaders.push({
+      gameName: "Arknights",
+      url: urlDict.Arknights,
+      path: "/api/v1/game/attendance",
+      body: JSON.stringify({ uid: arknights_uid, gameId: "1" }),
+      role: `1_${arknights_uid}_1`
+    });
+  }
 
-  const httpResponse = UrlFetchApp.fetch(urlDict.Endfield, { method: 'POST', headers, muteHttpExceptions: true });
-  const responseJson = JSON.parse(httpResponse.getContentText());
+  if (endfield) {
+    urlsnheaders.push({
+      gameName: "Endfield",
+      url: urlDict.Endfield,
+      path: "/web/v1/game/endfield/attendance",
+      body: "",
+      role: `3_${endfield_id}_${endfield_server}`
+    });
+  }
 
   let response = `Check-in completed for ${accountName}`;
-  if (responseJson.code === 10000) {
-    response += `\nEndfield: ${discordPing()}⚠️ Token expired! \nPlease update SK_TOKEN_CACHE_KEY in your config.`;
-  } else {
-    const isError = responseJson.message !== "OK";
-    response += `\nEndfield: ${isError ? discordPing() : ''}${responseJson.message}`;
+
+  for (const req of urlsnheaders) {
+    const headers = {
+      ...headerDict.default,
+      cred: SK_OAUTH_CRED_KEY,
+      "sk-game-role": req.role,
+      "sk-language": language,
+      timestamp,
+    };
+    headers.sign = generateSign(req.path, 'POST', headers, '', req.body, SK_TOKEN_CACHE_KEY);
+
+    const options = {
+      method: 'POST',
+      headers: headers,
+      muteHttpExceptions: true
+    };
+    if (req.body) {
+      options.payload = req.body;
+    }
+
+    const httpResponse = UrlFetchApp.fetch(req.url, options);
+    const responseJson = JSON.parse(httpResponse.getContentText());
+
+    if (responseJson.code === 10000) {
+      response += `\n${req.gameName}: ${discordPing()}⚠️ Token expired! \nPlease update SK_TOKEN_CACHE_KEY in your config.`;
+    } else {
+      const isError = responseJson.message !== "OK";
+      response += `\n${req.gameName}: ${isError ? discordPing() : ''}${responseJson.message}`;
+    }
   }
 
   return response;
