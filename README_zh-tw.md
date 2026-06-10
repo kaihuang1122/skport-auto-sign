@@ -9,11 +9,11 @@
     <br><b>繁體中文</b>　<a href="/README.md">English</a>　<a href="/README_ru.md">Русский</a>
 </p>
 
-skport自動簽到script，每月約可自動領取260石，堪比蚊子腿。  
-支援 明日方舟：終末地 。支援多帳號。
+skport自動簽到script，每月約可自動領取260石（終末地）/ 200 石（明日方舟），堪比蚊子腿。  
+支援 明日方舟（繁中服）、明日方舟：終末地 。支援多帳號。
 
 ## 特色
-* **輕巧** - 僅需少量的設定即可運作，程式碼僅90行
+* **輕巧** - 僅需少量的設定即可運作，程式碼約160行
 * **安全** - 自行部屬至Google Apps Script，不必擔心資料外洩的問題
 * **免費** - Google Apps Script目前是免費使用的佛心服務
 * **簡單** - 無須電腦瀏覽器即可自動幫你簽到，並由 Discord 或 Telegram 自動通知
@@ -35,8 +35,11 @@ const profiles = [
   {
     SK_OAUTH_CRED_KEY: "", // your skport SK_OAUTH_CRED_KEY in cookie
     SK_TOKEN_CACHE_KEY: "", // your SK_TOKEN_CACHE_KEY in localStorage
-    id: "", // your Endfield game id
-    server: "2", // Asia=2 Americas/Europe=3
+    arknights: true,
+    arknights_uid: "", // your Arknights character uid
+    endfield: true,
+    endfield_id: "", // your Endfield game id
+    endfield_server: "2", // Asia=2 Americas/Europe=3
     language: "en", // english=en 日本語=ja 繁體中文=zh_Hant 简体中文=zh_Hans 한국어=ko Русский=ru_RU
     accountName: "YOUR NICKNAME"
   }
@@ -79,18 +82,29 @@ const profiles = [
    console.log(msg2);
    ```
 
-3. **id**
+3. **arknights**
+   
+   是否要進行 **明日方舟** 的自動簽到。若要進行自動簽到則為true，若不要請填入false，或刪除此行。
 
-   請在此輸入您的明日方舟：終末地遊戲ID。
-   (應為數字)
+4. **arknights_uid**
 
-4. **server**
+   請在此輸入您的明日方舟遊戲UID。(應為數字)
+
+5. **endfield**
+
+   是否要進行 **明日方舟：終末地** 的自動簽到。若要進行自動簽到則為true，若不要請填入false，或刪除此行。
+
+6. **endfield_id**
+
+   請在此輸入您的明日方舟：終末地遊戲ID。(應為數字)
+
+7. **endfield_server**
 
    請在此輸入您的明日方舟：終末地遊戲伺服器。
    若您在亞洲伺服器，請輸入 `2`，
    若您在美洲/歐洲伺服器，請輸入 `3`。
 
-5. **language**
+8. **language**
 
    請在此輸入您的明日方舟：終末地遊戲語言。
    若您使用英文，請輸入 `en`，
@@ -100,7 +114,7 @@ const profiles = [
    若您使用韓文，請輸入 `ko`，
    若您使用俄文，請輸入 `ru_RU`。
 
-6. **accountName** - 請輸入您的自訂暱稱
+9. **accountName** - 請輸入您的自訂暱稱
 
    請在此輸入您的自訂SKPORT或遊戲內暱稱。
 

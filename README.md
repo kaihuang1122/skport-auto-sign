@@ -10,10 +10,10 @@
 </p>
 
 A lightweight, secure, and free script that automatically collect SKPORT daily check in rewards.  
-Supports **Arknights:Endfield**. Support multiple accounts.
+Supports **Arknights(TW server)** and **Arknights: Endfield**. Support multiple accounts.
 
 ## Features
-* **Lightweight** - The script only requires minimal configuration and is only 90 lines of code.
+* **Lightweight** - The script only requires minimal configuration and is only 160 lines of code.
 * **Secure** - The script can be self-deployed to Google Apps Script, no worries about data leaks.
 * **Free** - Google Apps Script is currently a free service.
 * **Simple** - The script can run without a browser and will automatically notify you through Discord or Telegram.
@@ -36,8 +36,11 @@ const profiles = [
   {
     SK_OAUTH_CRED_KEY: "", // your skport SK_OAUTH_CRED_KEY in cookie
     SK_TOKEN_CACHE_KEY: "", // your SK_TOKEN_CACHE_KEY in localStorage
-    id: "", // your Endfield game id
-    server: "2", // Asia=2 Americas/Europe=3
+    arknights: true,
+    arknights_uid: "", // your Arknights character uid
+    endfield: true,
+    endfield_id: "", // your Endfield game id
+    endfield_server: "2", // Asia=2 Americas/Europe=3
     language: "en", // english=en 日本語=ja 繁體中文=zh_Hant 简体中文=zh_Hans 한국어=ko Русский=ru_RU
     accountName: "YOUR NICKNAME"
   }
@@ -80,20 +83,31 @@ const profiles = [
    console.log(msg2);
    ```
 
-3. **id**
+3. **arknights**
 
-   Please enter your Arknights:Endfield game ID here.  
-   (should be number)
+   Whether to enable auto check-in for **Arknights**. Set to true if you want to enable it, false otherwise.
 
-4. **server**
+4. **arknights_uid**
 
-   Please enter your Arknights:Endfield game server here.  
+   Please enter your Arknights game UID here. (should be number)
+
+5. **endfield**
+
+   Whether to enable auto check-in for **Arknights: Endfield**. Set to true if you want to enable it, false otherwise.
+
+6. **endfield_id**
+
+   Please enter your Arknights: Endfield game ID here. (should be number)
+
+7. **endfield_server**
+
+   Please enter your Arknights: Endfield game server here.  
    If you're in Asia server, please enter `2`,  
    If you're in Americas/Europe server, please enter `3`.
 
-5. **language**
+8. **language**
 
-   Please enter your Arknights:Endfield game language here.  
+   Please enter your Arknights: Endfield game language here.  
    If you're using english, please enter `en`,  
    If you're using 日本語, please enter `ja`,  
    If you're using 繁體中文, please enter `zh_Hant`,  
@@ -101,7 +115,7 @@ const profiles = [
    If you're using 한국어, please enter `ko`,  
    If you're using Русский, please enter `ru_RU`.
 
-6. **accountName** - Please enter your customized nickname.
+9. **accountName** - Please enter your customized nickname.
 
    Please enter your customized SKPORT or in-game nickname here.
 
